@@ -19,9 +19,9 @@ public class MainLista {
     public static void main(String[] args) {
         ListaEncadeada lista = new ListaEncadeada();
         ListaEncadeada lista2 = new ListaEncadeada();
-        //lista.geraRandomica();
+        lista.geraRandomica();
         //lista.geraOrdenada();
-        lista.geraReversa();
+        //lista.geraReversa();
         //lista.insercaoDireta();
         //lista.insercaoBinaria();
         //lista.BubbleSort();

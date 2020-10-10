@@ -45,24 +45,24 @@ public class ListaEncadeada {
         this.fim = fim;
     }
     
-    public void inserir(int info)
-    {   
-        No nova = new No(info,null,null);
+    private void insere(No novo)
+    {
         if(inicio == null)
         {
-            inicio = nova;
-            fim = nova;
+            inicio = novo;
+            fim = inicio;
         }
         else
         {
             No aux = inicio;
-            while(aux.getProx()!= null)
+            while(aux.getProx() != null)
                 aux = aux.getProx();
-            nova.setAnt(aux);
-            aux.setProx(nova);
-            fim = nova;
+            
+            novo.setAnt(aux);
+            aux.setProx(novo);
+            fim = novo;
         }
-    }
+    }      
     
     public No busca(int info)
     {
@@ -107,10 +107,11 @@ public class ListaEncadeada {
         No aux = inicio;
         while(aux != null)
         {
-            System.out.println(aux.getInfo());
+            System.out.println(aux.getInfo() + " ");
             aux = aux.getProx();
         }
     }
+    
     
     //Metodos de Ordenacao
     public void insercaoDireta()
@@ -229,17 +230,23 @@ public class ListaEncadeada {
     public void geraRandomica()
     {
         Random r = new Random();
-        for(int i = 0; i < 10;i++)
-        {
-            inserir(r.nextInt(100));
-        }
+        insere(new No(1,null,null));
+        insere(new No(3,null,null));
+        insere(new No(2,null,null));
+        insere(new No(5,null,null));
+        insere(new No(4,null,null));
+        insere(new No(6,null,null));
+        insere(new No(8,null,null));
+        insere(new No(7,null,null));
+        insere(new No(9,null,null));
+        insere(new No(10,null,null));
     }
     
     public void geraOrdenada()
     {
         for(int i = 10;i <= 100; i = i + 10)
         {
-            inserir(i);
+            insere(new No(i,null,null));
         }
     }
     
@@ -249,7 +256,7 @@ public class ListaEncadeada {
         ListaEncadeada nova = new ListaEncadeada();
         while(aux != null)
         {
-            nova.inserir(aux.getInfo());
+            nova.insere(aux);
             aux = aux.getProx();
         }
         return nova;
@@ -259,7 +266,7 @@ public class ListaEncadeada {
     {
         for(int i = 100;i >= 10;i = i - 10)
         {
-            inserir(i);
+            insere(new No(i,null,null));
         }
     }
     
@@ -303,6 +310,124 @@ public class ListaEncadeada {
             }
         }
     }
+    
+    public void quicksemPivo()
+    {
+        quicksp(inicio,buscaNo(inicio,0));
+    }
+    
+    private void quicksp(No ini,No fim)
+    {
+        No i = ini, j = fim;
+        
+        while(i != j)
+        {
+            while(i != j && i.getInfo() <= j.getInfo())
+                i = buscaNo(i, 1);
+            
+            swap(i, j);
+            while(i != j && j.getInfo() >= i.getInfo())
+                j = buscaNo(j, -1);
+            
+            swap(i, j);
+        }
+        
+        if(j.getAnt() != null && j != ini && ini != j.getAnt())
+            quicksp(ini, j.getAnt());
+        if(i.getProx() != null && i != fim && fim != i.getProx())
+            quicksp(i.getProx(), fim);
+    }
+    
+    public void quickcomPivo()
+    {
+        quickcp(inicio,buscaNo(inicio,0));
+    }
+    
+    private void quickcp(No ini,No fim)
+    {
+        No i = ini, j = fim, pivo;
+        int pos = tamanhoLista(ini, fim); 
+        if(pos == 0)
+            pivo = inicio;
+        else
+            pivo = buscaNo(ini, pos / 2);
+        
+        while(i != j)
+        {
+            while(i.getInfo() < pivo.getInfo())
+                i = buscaNo(i, 1);
+            
+            while(j.getInfo() > pivo.getInfo())
+                j = buscaNo(j, -1);
+            
+            swap(i, j);
+            
+            if(i != j)
+                i = buscaNo(i, 1);
+            if(i != j)
+                j = buscaNo(j, -1);
+        }
+        
+        if(j.getAnt() != null && j != ini && ini != j.getAnt())
+            quickcp(ini, j.getAnt());
+        if(i.getProx() != null && i != fim && fim != i.getProx())
+            quickcp(i.getProx(), fim);
+    }
+    
+    public void merge1()
+    {
+        int tl = tamanhoLista(inicio, null), seq = 1, aux_seq = seq, aux_seq1 = seq;
+        int i, meio = tl / 2, k, j;
+        No[] vet1 = new No[tl / 2], vet2 = new No[tl / 2];
+        while(seq < tl)
+        {
+            for(i = 0; i < meio; i++)
+            {
+                if(i == 0)
+                    vet1[i] = inicio;
+                else
+                    vet1[i] = buscaNo(inicio, i);
+                
+                vet2[i] = buscaNo(inicio, i + meio);
+            }
+            
+            aux_seq = aux_seq1 = seq;
+            i = k = j = 0;
+            inicio = null;
+            while(aux_seq < tl)
+            {
+                while(i < aux_seq && j < aux_seq)
+                {
+                    if(vet1[i].getInfo() < vet2[j].getInfo())
+                    {
+                        insere(vet1[i]);
+                        i++;
+                    }
+                    else
+                    {
+                        insere(vet2[j]);
+                        j++;
+                    }
+                }
+                
+                while(i < aux_seq)
+                {
+                    insere(vet1[i]);
+                    i++;
+                }
+                
+                while(j < aux_seq)
+                {
+                    insere(vet2[j]);
+                    j++;
+                }
+                
+                aux_seq += aux_seq1;
+            }
+            seq += seq;
+        }
+    }
+    
     
     private No buscaBinaria(int info,No tl)
     {
